@@ -1,47 +1,101 @@
-🧠 SLM Assistant – Knowledge Distillation with Teacher & Student LLMs
+# 🧠 SLM Assistant (Small Language Model Assistant)
 
-This project implements a Small Language Model (SLM) Assistant by applying Knowledge Distillation (KD) techniques.
-A large Teacher LLM (Meta LLaMA-3.1 8B Instruct) is used to generate high-quality responses on instruction datasets, which are then used to train a smaller Student Model.
+This project implements a **Teacher-Student Knowledge Distillation pipeline** for training a small language model (SLM) using instruction-following data. The teacher model is a large LLaMA-based model from Hugging Face, and the student is trained on a distilled dataset to make it lightweight and suitable for **edge devices**.
 
-The goal is to build an efficient, edge-friendly personal knowledge assistant that can perform reasoning and instruction-following tasks without requiring heavy compute.
+---
 
-🚀 Features
+## 📂 Project Structure
 
-📂 Dataset Preparation
+```
+SLM_ASSISTANT/
+│── teacher_response/         # Teacher model inference and dataset generation
+│   │── teacher_model.py      # Loads teacher model with quantization
+│   │── get_response.py       # Functions to query teacher responses
+│   │── teacher_response.py   # Main script to generate distillation datasets
+│   │── __init__.py
+│
+│── utils/                    # Utility functions
+│   │── logger_config.py      # Logger setup for the whole project
+│   │── __init__.py
+│
+│── student/                  # (Planned) Student training and evaluation pipeline
+│
+│── teacher_datasets/         # Saved knowledge distillation datasets (.jsonl)
+│
+│── README.md                 # Project documentation
+```
 
-Uses Alpaca Dataset
- (52k instructions).
+---
 
-Supports chunked dataset saving in .jsonl format for Colab/GPU memory constraints.
+## 🚀 Features
 
-Saves two versions:
+- ✅ Loads **Meta LLaMA-3.1 8B Instruct** as the teacher model  
+- ✅ Generates **teacher-student distillation datasets** from Alpaca  
+- ✅ Saves datasets in **JSONL format** (knowledge distillation + mixed dataset)  
+- ✅ Supports **quantization with 4-bit (bitsandbytes)** for efficient inference  
+- ✅ Logging system for clean, trackable pipeline execution  
 
-kd_dataset: distilled teacher responses.
+---
 
-mskd_dataset: teacher responses + ground truth.
+## ⚙️ Installation
 
-🧑‍🏫 Teacher Model Inference
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/YOUR_GITHUB/SLM_ASSISTANT.git
+   cd SLM_ASSISTANT
+   ```
 
-Loads Meta LLaMA-3.1-8B-Instruct with 4-bit quantization (bitsandbytes).
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # On Linux/Mac
+   venv\Scripts\activate    # On Windows
+   ```
 
-Generates teacher responses using Hugging Face Transformers.
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-🧑‍🎓 Student Model Training (WIP)
+4. Set your **Hugging Face Token** in `.env`:
+   ```bash
+   HF_TOKEN=your_huggingface_token_here
+   ```
 
-Student model learns from teacher-generated instruction-response pairs.
+---
 
-Evaluation pipeline for comparing ground truth vs teacher vs student.
+## 📊 Usage
 
-🛠 Clean Project Structure
+Run the dataset generation script from the project root:
+```bash
+python -m teacher_main.py
+```
 
-teacher_response/ → teacher model + dataset generation.
+This will:
+- Load the teacher model (`meta-llama/Llama-3.1-8B-Instruct`)
+- Query Alpaca dataset samples
+- Save teacher responses into `teacher_datasets/`
 
-utils/ → reusable helper functions (e.g., logging).
+Example dataset entry (`alpaca_mskd_chunk0.jsonl`):
+```json
+{
+  "instruction": "Give three tips for staying healthy.",
+  "input": "",
+  "ground_truth": "1. Eat a balanced diet ...",
+  "teacher_response": "1. Drink plenty of water..."
+}
+```
 
-main.py at root for a clean entry point.
+---
 
-📝 Logging Support
+## 🔮 Next Steps
 
-Centralized logging setup (utils/logger_config.py).
+- Train the **student model** on the distilled dataset  
+- Evaluate student vs teacher responses  
+- Optimize for **edge deployment**  
 
-Replaces print() with structured logs.
+---
+
+## 📜 License
+
+Developed by **Yogesh Murala**
