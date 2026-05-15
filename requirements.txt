@@ -1,0 +1,15 @@
+torch
+torchvision
+torchaudio
+transformers
+datasets
+peft
+accelerate
+bitsandbytes
+trl
+tqdm
+rouge-score
+gradio
+python-dotenv
+tensorboard
+scipy
